@@ -1,0 +1,33 @@
+WebRTC IO 2013 : https://youtu.be/p2HzZkd2A40
+ShareFest : https://github.com/Peer5/Sharefest
+Code examples : https://simpl.info/
+test stun server : stun.l.google.com:19302
+webrtc internals : chrome://webrtc-internals
+adapter.js webrtc polyfill : https://github.com/webrtc/adapter
+video chat:
+	SimpleWebRTC
+	easyRTC
+	webRTC.io
+P2P data:
+	PeerJS
+	Sharefest
+Connection services:
+	OpenTok
+	vLine
+The presentation deck: http://io13webrtc.appspot.com/#1
+
+------------------------
+
+Is WebRTC a Failure? : https://youtu.be/r-qIkkdGVLM
+coturn (Turn and stun server) : https://github.com/coturn/coturn
+WebRTC tutorial : https://deepstreamhub.com/tutorials/protocols/webrtc-intro/
+
+------------------------
+
+WebRTC lot of code examples : https://www.webrtc-experiment.com/
+W3C WebRTC 1.0 : https://www.w3.org/TR/webrtc/
+
+
+------------------------
+
+example codes : https://webrtc.github.io/samples/
