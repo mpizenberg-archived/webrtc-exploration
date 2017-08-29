@@ -1,0 +1,17 @@
+setRemoteDescription() -> send an RTCPeerConnection addstream event
+
+EVENTS #####################################
+
+* ondatachannel : corresponding event sent when an RTCDataChannel is added to the connection by remote peer calling createDataChannel().
+* onicecandidate : corresponding event sent when local ICE agent needs to deliver a message to the other peer through the signaling server.
+* ontrack : corresponding event sent when a new incoming MediaStreamTrack has been created and associated with an RTCRtpReceiver which has been added to the set of receivers on connection.
+
+METHODS ####################################
+
+* addIceCandidate() : when receiving a new ICE candidate from the remote peer over signaling channel, deliver it to the browser's ICE agent by calling this.
+* addTrack() : add a new media track to the set of tracks which will be transmitted to the other peer.
+* close() : closes the current peer connection.
+* createAnswer() : creates an SDP answer to an offer received. The answer contains information about media, codec, options supported, and ICE candidates gathered. Return a promise, that should be sent to the source of the offer to continue the negotiation process.
+* createOffer() : initiates creation of an SDP offer. Includes information about media, codec, options supported, and ICE candidates gathered. Return a promise, that should be sent over the signaling channel to a potential peer to request a connection or to update the config of an existing one.
+* setLocalDescription() : changes the local description.
+* setRemoteDescription() : changes the remote description.
