@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset = "utf-8">
+		<title>Local WebRTC</title>
+	</head>
+	<body>
+		<p>This page shows how to transfer a file via WebRTC datachannels.</p>
+		<p>To accomplish this in an interoperable way, the file is split into chunks which are then transferred via the datachannel. The datachannel is reliable and ordered by default which is well-suited to filetransfers.</p>
+		<p>Send and receive progress is monitored using HTML5 <i>progress</i> elements.</p>
+		<p>At the receiver, the file is reassembled using the Blob API and made available for download.</p>
+
+		<form><input type="file" name="files" id="file-input"/></form>
+		<button id="send-button">Send</button>
+
+		<p><span>Send progress: </span><progress id="send-progress" value="0"></progress></p>
+		<p><span>Receive progress: </span><progress id="receive-progress" value="0"></progress></p>
+
+		<p><a id="download"></a></p>
+
+		<script src = "adapter.js"></script>
+		<script src = "client.js"></script>
+	</body>
+</html>
