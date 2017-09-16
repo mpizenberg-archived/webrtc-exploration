@@ -17,7 +17,8 @@ let socket
 
 
 // Configuration
-const stream_config = { audio: true, video: { width: 320, height: 240 } }
+// const stream_config = { audio: true, video: { width: 320, height: 240 } }
+const stream_config = { audio: true, video: true }
 const socket_address = "wss://" + window.location.host
 
 
