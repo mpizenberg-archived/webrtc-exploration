@@ -1,0 +1,17 @@
+{
+  "name": "pc_lan_websocket_secure",
+  "version": "1.0.0",
+  "description": "",
+  "main": "secure-server.js",
+  "scripts": {
+    "postinstall": "openssl req -new -x509 -keyout server.pem -out server.pem -days 365 -nodes -subj '/CN=www.mydom.com/O=My Company Name LTD./C=US'",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node secure-server.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1",
+    "ws": "^7.3.0"
+  }
+}
