@@ -12,6 +12,6 @@
   "license": "ISC",
   "dependencies": {
     "express": "^4.15.4",
-    "ws": "^3.1.0"
+    "ws": "^3.3.1"
   }
 }
