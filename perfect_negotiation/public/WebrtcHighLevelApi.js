@@ -4,9 +4,8 @@
 //   const signalingSocket = new SignalingSocket(socketAddress);
 //
 // Then add a callback for when remote peers are connected:
-//   signalingSocket.onRemotePeerConnected = (remotePeerId) => {
-//     const chan = signalingSocket.addChannel(remotePeerId);
-//     peerConnection = new PeerConnection(iceConfig, chan);
+//   signalingSocket.onRemotePeerConnected = (chan, polite) => {
+//     peerConnection = new PeerConnection(iceConfig, chan, polite);
 //     ...
 //   };
 //
@@ -38,7 +37,8 @@ function SignalingSocket(socketAddress) {
   socket.onmessage = (jsonMsg) => {
     let msg = JSON.parse(jsonMsg.data);
     if (msg.msgType == "greet") {
-      this.onRemotePeerConnected(msg.remotePeerId, msg.polite);
+      let chan = addChannel(msg.remotePeerId);
+      this.onRemotePeerConnected(chan, msg.polite);
     } else {
       const chan = channels.get(msg.remotePeerId);
       if (chan == undefined) return;
@@ -50,10 +50,13 @@ function SignalingSocket(socketAddress) {
     }
   };
 
+  // --------------- Private functions
+
   // Add a dedicated channel for a remote peer.
   // Return the created channel to the caller.
-  this.addChannel = (remotePeerId) => {
+  function addChannel(remotePeerId) {
     const chan = {
+      remotePeerId: remotePeerId,
       sendDescription: (localDescription) =>
         sendDescription(remotePeerId, localDescription),
       sendIceCandidate: (iceCandidate) =>
@@ -63,9 +66,7 @@ function SignalingSocket(socketAddress) {
     };
     channels.set(remotePeerId, chan);
     return chan;
-  };
-
-  // --------------- Private functions
+  }
 
   // Inform the signaling server that we are ready.
   function sendJoin() {
@@ -96,7 +97,7 @@ function SignalingSocket(socketAddress) {
 }
 
 // Create a peer connection with a dedicated signaling channel.
-//   const peerConnection = new PeerConnection(iceConfig, chan);
+//   const peerConnection = new PeerConnection(iceConfig, chan, polite);
 //
 // Then add a callback function for when remote track are added.
 //   peerConnection.onRemoteTrack = (streams) => { ... };

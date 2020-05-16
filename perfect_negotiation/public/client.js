@@ -38,9 +38,8 @@ navigator.mediaDevices
 function initSignalingAndPC() {
   // Setup signaling and peer connection.
   signalingSocket = new SignalingSocket(socket_address);
-  signalingSocket.onRemotePeerConnected = (remotePeerId, polite) => {
-    console.log("Peer connected", remotePeerId);
-    const chan = signalingSocket.addChannel(remotePeerId);
+  signalingSocket.onRemotePeerConnected = (chan, polite) => {
+    console.log("Peer connected", chan.remotePeerId);
     pc = new PeerConnection(ice_config, chan, polite);
     pc.onRemoteTrack = (streams) => {
       remote_video.srcObject = streams[0];
