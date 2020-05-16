@@ -44,13 +44,32 @@ wss.on("connection", (ws, req) => {
       peersSocks.set(idCount, ws);
       peersIds.set(ws, idCount);
       idCount += 1;
+    } else if (msg.msgType == "leave") {
+      leave(ws);
     } else if (msg.msgType == "sessionDescription") {
       relay(ws, msg);
     } else if (msg.msgType == "iceCandidate") {
       relay(ws, msg);
     }
   });
+  ws.on("close", () => leave(ws));
 });
+
+function leave(ws) {
+  originId = peersIds.get(ws);
+  console.log("leave", originId);
+  if (originId == undefined) return;
+  peersIds.delete(ws);
+  peersSocks.delete(originId);
+  for (let [id, sock] of peersSocks) {
+    sock.send(
+      JSON.stringify({
+        msgType: "left",
+        remotePeerId: originId,
+      })
+    );
+  }
+}
 
 function relay(ws, msg) {
   // Relay message to target peer.

@@ -46,6 +46,11 @@ function initSignalingAndPC() {
     };
     pc.setLocalStream(local_stream);
   };
+  signalingSocket.onRemotePeerDisconnected = (remotePeerId) => {
+    pc.close();
+    pc = null;
+    remote_video.srcObject = null;
+  };
 }
 
 // JOIN ##############################################################
@@ -59,10 +64,12 @@ function joinCall() {
 // LEAVE #############################################################
 
 function leaveCall() {
-  // TODO
-  // join_button.disabled = false;
-  // leave_button.disabled = true;
-  // pc.close();
-  // pc = null;
-  // socket.close();
+  join_button.disabled = false;
+  leave_button.disabled = true;
+  signalingSocket.leave();
+  if (pc != null) {
+    pc.close();
+    pc = null;
+  }
+  remote_video.srcObject = null;
 }

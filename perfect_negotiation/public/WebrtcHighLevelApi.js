@@ -9,6 +9,9 @@
 //     ...
 //   };
 //
+// And a callback for when a remote is disconnected:
+//   signalingSocket.onRemotePeerDisconnected = (remotePeerId) => { ... };
+//
 // Finally inform the server that you are ready to connect:
 //   signalingSocket.join();
 function SignalingSocket(socketAddress) {
@@ -17,6 +20,9 @@ function SignalingSocket(socketAddress) {
 
   // Callback for each remote peer also connected.
   this.onRemotePeerConnected = undefined;
+
+  // Callback for each remote peer is disconnected.
+  this.onRemotePeerDisconnected = undefined;
 
   // Hashmap holding all signaling channels between peers.
   const channels = new Map();
@@ -32,6 +38,11 @@ function SignalingSocket(socketAddress) {
     }
   };
 
+  // Inform others that we are leaving.
+  this.leave = () => {
+    sendLeave();
+  };
+
   // Listen to messages and redirect either to
   // the ICE candidate or the description callback.
   socket.onmessage = (jsonMsg) => {
@@ -39,6 +50,9 @@ function SignalingSocket(socketAddress) {
     if (msg.msgType == "greet") {
       let chan = addChannel(msg.remotePeerId);
       this.onRemotePeerConnected(chan, msg.polite);
+    } else if (msg.msgType == "left") {
+      channels.delete(msg.remotePeerId);
+      this.onRemotePeerDisconnected(msg.remotePeerId);
     } else {
       const chan = channels.get(msg.remotePeerId);
       if (chan == undefined) return;
@@ -71,6 +85,11 @@ function SignalingSocket(socketAddress) {
   // Inform the signaling server that we are ready.
   function sendJoin() {
     socket.send(JSON.stringify({ msgType: "join" }));
+  }
+
+  // Inform the signaling server that we are leaving.
+  function sendLeave() {
+    socket.send(JSON.stringify({ msgType: "leave" }));
   }
 
   // Send a session description to the remote peer.
@@ -106,7 +125,7 @@ function SignalingSocket(socketAddress) {
 //   peerConnection.setLocalStream(localStream);
 function PeerConnection(iceConfig, signalingChannel, polite) {
   // Init the RTCPeerConnection.
-  const pc = new RTCPeerConnection(iceConfig);
+  let pc = new RTCPeerConnection(iceConfig);
 
   // Callback for when tracks are being received.
   this.onRemoteTrack = undefined;
@@ -121,6 +140,13 @@ function PeerConnection(iceConfig, signalingChannel, polite) {
     for (const track of localStream.getTracks()) {
       pc.addTrack(track, localStream);
     }
+  };
+
+  // Close the connection with the peer.
+  this.close = () => {
+    pc.close();
+    pc = null;
+    signalingChannel = null; // is it needed?
   };
 
   // Handling the negotiationneeded event.
