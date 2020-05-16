@@ -33,7 +33,8 @@ navigator.mediaDevices
   .then((stream) => (local_stream = stream))
   .then(() => (local_video.srcObject = local_stream))
   .then(() => (join_button.disabled = false))
-  .then(initSignalingAndPC);
+  .then(initSignalingAndPC)
+  .catch((error) => console.log(error));
 
 function initSignalingAndPC() {
   // Setup signaling and peer connection.
