@@ -26,20 +26,8 @@ wss.on("connection", (ws, req) => {
       console.log("join", idCount);
       // Greet each pair of peers on both sides.
       for (let [id, sock] of peersSocks) {
-        ws.send(
-          JSON.stringify({
-            msgType: "greet",
-            remotePeerId: id,
-            polite: true,
-          })
-        );
-        sock.send(
-          JSON.stringify({
-            msgType: "greet",
-            remotePeerId: idCount,
-            polite: false,
-          })
-        );
+        sendJsonMsg(ws, "greet", id, { polite: true });
+        sendJsonMsg(sock, "greet", idCount, { polite: false });
       }
       peersSocks.set(idCount, ws);
       peersIds.set(ws, idCount);
@@ -62,12 +50,7 @@ function leave(ws) {
   peersIds.delete(ws);
   peersSocks.delete(originId);
   for (let [id, sock] of peersSocks) {
-    sock.send(
-      JSON.stringify({
-        msgType: "left",
-        remotePeerId: originId,
-      })
-    );
+    sendJsonMsg(sock, "left", originId);
   }
 }
 
@@ -78,13 +61,12 @@ function relay(ws, msg) {
   const originId = peersIds.get(ws);
   if (originId == undefined) return;
   console.log("relay", msg.msgType, "from", originId, "to", msg.remotePeerId);
-  target.send(
-    JSON.stringify({
-      msgType: msg.msgType,
-      data: msg.data,
-      remotePeerId: originId,
-    })
-  );
+  sendJsonMsg(target, msg.msgType, originId, { data: msg.data });
+}
+
+function sendJsonMsg(ws, msgType, remotePeerId, extra = {}) {
+  const msg = Object.assign({ msgType, remotePeerId }, extra);
+  ws.send(JSON.stringify(msg));
 }
 
 console.log("Listening at https://localhost:" + httpsPort);
